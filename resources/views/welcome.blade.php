@@ -1,1 +1,4 @@
-{!! \File::get(public_path('template/default.tpl')) !!}
+{!!
+cache('welcome-page');
+
+ !!}

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Backend\LadiUpdateRequest;
+use Cache;
 use Illuminate\Http\Request;
 
 class LadiController extends Controller
@@ -22,6 +23,7 @@ class LadiController extends Controller
 
     public function update(LadiUpdateRequest $request)
     {
+	    Cache::forget('welcome-page');
     	//backup code
 	    $old = \File::get(public_path('template/default.tpl'));
 
@@ -29,6 +31,8 @@ class LadiController extends Controller
 
 	    // push new code
 		\File::put(public_path('template/default.tpl'), $request->input('code'));
+
+	    Cache::forever('welcome-page', $request->input('code'));
 
 	    return  redirect()->route('admin.ladi.index')->with('status', 'Sửa template thành công!');
     }
@@ -41,8 +45,12 @@ class LadiController extends Controller
      */
     public function reset()
     {
+	    Cache::forget('welcome-page');
+	    
 	    $defautl = \File::get(public_path('template/backup.tpl'));
 	    \File::put(public_path('template/default.tpl'), $defautl);
+
+	    Cache::forever('welcome-page', $defautl);
 
 	    return  redirect()->route('admin.ladi.index')->with('status', 'Khôi phục template thành công!');
     }
